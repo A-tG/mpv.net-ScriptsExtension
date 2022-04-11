@@ -12,16 +12,17 @@ namespace AtgScriptsExtension.Extensions
         {
             const int bpp = 4; // r, g, b, X - 4 bytes
             var format = bmp.PixelFormat;
+            var preferredFormat = PixelFormat.Format32bppRgb;
             int paddingB = strideB - bmp.Width * bpp;
-            int outOfBoundsB = paddingB * bmp.Height;
+            int outOfBoundB = paddingB * bmp.Height;
 
             if (data == IntPtr.Zero) throw new ArgumentException("data is Zero pointer");
             if (lenB == 0) throw new ArgumentException("lenBytes is 0");
-            if (((lenB - outOfBoundsB) / bpp) != bmp.Width * bmp.Height)
+            if (((lenB - outOfBoundB) / bpp) != bmp.Width * bmp.Height)
             {
                 throw new ArgumentException("Bitmap dimensions mismatch");
             }
-            if (format != PixelFormat.Format32bppRgb) throw new InvalidOperationException("PixelFormat have to be Format32bppRgb");
+            if (format != preferredFormat) throw new InvalidOperationException($"PixelFormat have to be {preferredFormat}");
 
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             var bmData = bmp.LockBits(rect, ImageLockMode.ReadWrite, format);
@@ -40,9 +41,9 @@ namespace AtgScriptsExtension.Extensions
                     (y == 0) && (pIndex >= widthP);
                 if (isOutOfBound) return;
 
-                var rPtr = readPtr + bpp * pIndex;
-                int offset = paddingB * y;
-                var wPtr = writePtr + bpp * pIndex - offset;
+                int ofs = bpp * pIndex;
+                var rPtr = readPtr + ofs;
+                var wPtr = writePtr + ofs - paddingB * y;
                 const int gOfs = 1;
                 const int bOfs = 2;
                 Marshal.WriteByte(wPtr, Marshal.ReadByte(rPtr));
