@@ -156,7 +156,7 @@ namespace AtgScriptsExtension
                     bmp.ReadRgbFromRgb0(ba.data, (int)ba.size.ToUInt64());
                     break;
                 default:
-                    throw new ArgumentException("Not supported color format: " + format);
+                    throw new ArgumentException("Unsupported color format: " + format);
             }
         }
 
