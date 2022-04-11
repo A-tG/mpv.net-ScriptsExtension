@@ -25,12 +25,12 @@ namespace AtgScriptsExtension
             m_core.ClientMessage += OnMessage;
         }
 
-        public bool TryScreenshotToClipboard()
+        public bool TryScreenshotToClipboard(string flags = "")
         {
             bool res = false;
             try
             {
-                ScreenshotToClipboard();
+                ScreenshotToClipboard(flags);
                 res = true;
             }
             catch (Exception ex)
@@ -44,9 +44,9 @@ namespace AtgScriptsExtension
             return res;
         }
 
-        private void ScreenshotToClipboard()
+        private void ScreenshotToClipboard(string flags = "")
         {
-            GetRawScreenshot(out m_bmp);
+            GetRawScreenshot(out m_bmp, flags);
 
             var thread = new Thread(() =>
             {
@@ -184,11 +184,17 @@ namespace AtgScriptsExtension
 
             if (args[0] != Name) return;
 
+            var flags = "";
+            if (args.Length > 1)
+            {
+                flags = args[1];
+            }
+
             string text = "Copy Screenshot to clipboard";
             m_core.CommandV("show-text", text);
 
             string duration = m_core.GetPropertyOsdString("osd-duration");
-            if (TryScreenshotToClipboard())
+            if (TryScreenshotToClipboard(flags))
             {
                 text += ": Succeded";
             }
@@ -201,7 +207,7 @@ namespace AtgScriptsExtension
                     duration = 5000.ToString();
                 }
             }
-            m_errorMessage = string.Empty;
+            m_errorMessage = "";
 
             m_core.CommandV("show-text", text, duration);
         }
