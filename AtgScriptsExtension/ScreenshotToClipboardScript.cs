@@ -18,6 +18,7 @@ namespace AtgScriptsExtension
         private const string scrRawCommand = "screenshot-raw";
         private CorePlayer m_core = Global.Core;
         private Bitmap m_bmp;
+        private string m_errorMessage = string.Empty;
 
         public ScreenshotToClipboardScript()
         {
@@ -31,6 +32,10 @@ namespace AtgScriptsExtension
             {
                 ScreenshotToClipboard();
                 res = true;
+            }
+            catch (Exception ex)
+            {
+                m_errorMessage = $"{ex.GetType().Name}: {ex.Message}";
             }
             finally
             {
@@ -97,10 +102,7 @@ namespace AtgScriptsExtension
             var res = (mpv_error)mpv_command_node(m_core.Handle, argsPtr, resultPtr);
             if (res != mpv_error.MPV_ERROR_SUCCESS)
             {
-                throw new InvalidOperationException(
-                    "Command returned error: " + 
-                    ((int)res).ToString() + " " + 
-                    res.ToString());
+                throw new InvalidOperationException($"Command returned error: {((int)res)} {res}");
             }
 
             result = Marshal.PtrToStructure<mpv_node>(resultPtr);
@@ -156,7 +158,7 @@ namespace AtgScriptsExtension
                     bmp.ReadRgbFromRgb0(ba.data, (int)ba.size.ToUInt64());
                     break;
                 default:
-                    throw new ArgumentException("Unsupported color format: " + format);
+                    throw new ArgumentException($"Unsupported color format: {format}");
             }
         }
 
@@ -169,10 +171,23 @@ namespace AtgScriptsExtension
             string text = "Copy Screenshot to clipboard";
             m_core.CommandV("show-text", text);
 
-            text += TryScreenshotToClipboard() ?
-                ": Succeded" :
-                ": Failed";
-            m_core.CommandV("show-text", text);
+            string duration = m_core.GetPropertyOsdString("osd-duration");
+            if (TryScreenshotToClipboard())
+            {
+                text += ": Succeded";
+            }
+            else
+            {
+                text += ": Failed";
+                if (!string.IsNullOrEmpty(m_errorMessage))
+                {
+                    text += '\n' + m_errorMessage;
+                    duration = 5000.ToString();
+                }
+            }
+            m_errorMessage = string.Empty;
+
+            m_core.CommandV("show-text", text, duration);
         }
     }
 }
