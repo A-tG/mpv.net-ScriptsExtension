@@ -140,7 +140,7 @@ namespace AtgScriptsExtension
                         stride = node.int64;
                         break;
                     case "format":
-                        format = Marshal.PtrToStringAnsi(node.str);
+                        format = Marshal.PtrToStringAnsi(node.str) ?? string.Empty;
                         break;
                     case "data":
                         ba = Marshal.PtrToStructure<mpv_byte_array>(node.ba);
@@ -156,7 +156,7 @@ namespace AtgScriptsExtension
                     bmp.ReadRgbFromRgb0(ba.data, (int)ba.size.ToUInt64());
                     break;
                 default:
-                    throw new ArgumentException("Not supported color format");
+                    throw new ArgumentException("Not supported color format: " + format);
             }
         }
 
