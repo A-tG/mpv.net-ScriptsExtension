@@ -85,6 +85,7 @@ namespace AtgScriptsExtension
             MarHelper.CopyStrToByteStrBuff(scrRawCommand, cmdPtr);
             argsNodeListCmdVal.str = (IntPtr)cmdPtr;
 
+            // adding command and flags to args Node
             var argsNodeList = new mpv_node_list();
             int argsLen = hasFlags ? 2 : 1;
             var listValSize = Marshal.SizeOf(argsNodeListCmdVal);
@@ -101,22 +102,20 @@ namespace AtgScriptsExtension
             {
                 format = mpv_format.MPV_FORMAT_NODE_ARRAY
             };
-            var lPtr = stackalloc byte[Marshal.SizeOf(argsNodeList)];
-            var listPtr = (IntPtr)lPtr;
+            var listPtr = stackalloc byte[Marshal.SizeOf(argsNodeList)];
             argsNodeList.num = argsLen;
-            argsNode.list = listPtr;
-            Marshal.StructureToPtr(argsNodeList, listPtr, false);
+            argsNode.list = (IntPtr)listPtr;
+            Marshal.StructureToPtr(argsNodeList, (IntPtr)listPtr, false);
 
-            var aPtr = stackalloc byte[Marshal.SizeOf(argsNode)];
-            var argsPtr = (IntPtr)aPtr;
-            Marshal.StructureToPtr(argsNode, argsPtr, false);
+            var argsPtr = stackalloc byte[Marshal.SizeOf(argsNode)];
+            Marshal.StructureToPtr(argsNode, (IntPtr)argsPtr, false);
 
             var resultNode = new mpv_node();
             var rPtr = stackalloc byte[Marshal.SizeOf(resultNode)];
             var resultPtr = (IntPtr)rPtr;
             Marshal.StructureToPtr(resultNode, resultPtr, false);
 
-            var res = (mpv_error)mpv_command_node(m_core.Handle, argsPtr, resultPtr);
+            var res = (mpv_error)mpv_command_node(m_core.Handle, (IntPtr)argsPtr, resultPtr);
             if (res != mpv_error.MPV_ERROR_SUCCESS)
             {
                 throw new InvalidOperationException($"Command returned error: {((int)res)} {res}");
@@ -134,7 +133,7 @@ namespace AtgScriptsExtension
         {
             long w, h, stride;
             w = h = stride = 0;
-            string format = string.Empty;
+            string format = "";
             var ba = new mpv_byte_array();
 
             for (int i = 0; i < list.num; i++)
