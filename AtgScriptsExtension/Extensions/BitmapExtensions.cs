@@ -33,8 +33,7 @@ namespace AtgScriptsExtension.Extensions
             var paddingP = paddingB / bpp;
             var strideP = strideB / bpp;
             var widthP = bmp.Width;
-            var opt = new ParallelOptions() { MaxDegreeOfParallelism = 1 };
-            Parallel.For(0, pixelsNumber, opt, (pIndex) =>
+            Parallel.For(0, pixelsNumber, (pIndex) =>
             {
                 int y = pIndex / strideP;
                 bool isOutOfBound = ((pIndex % strideP) >= widthP) ||
