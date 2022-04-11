@@ -17,6 +17,7 @@ namespace AtgScriptsExtension
 
         private const string scrRawCommand = "screenshot-raw";
         private CorePlayer m_core = Global.Core;
+        private Bitmap m_bmp;
 
         public ScreenshotToClipboardScript()
         {
@@ -25,23 +26,27 @@ namespace AtgScriptsExtension
 
         public bool TryScreenshotToClipboard()
         {
+            bool res = false;
             try
             {
                 ScreenshotToClipboard();
-                return true;
+                res = true;
             }
-            catch { }
-            return false;
+            finally
+            {
+                m_bmp?.Dispose();
+            }
+            return res;
         }
 
         private void ScreenshotToClipboard()
         {
-            var img = GetRawScreenshot();
+            GetRawScreenshot(out m_bmp);
 
             var thread = new Thread(() =>
             {
                 // need to be done in STA thread
-                Clipboard.SetImage(img);
+                Clipboard.SetImage(m_bmp);
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
@@ -52,7 +57,7 @@ namespace AtgScriptsExtension
         [DllImport("mpv-2.dll")]
         internal static extern int mpv_command_node(IntPtr ctx, IntPtr args, IntPtr result);
 
-        unsafe private Bitmap GetRawScreenshot()
+        unsafe private void GetRawScreenshot(out Bitmap bmp)
         {
             var args = new mpv_node
             {
@@ -101,15 +106,13 @@ namespace AtgScriptsExtension
             result = Marshal.PtrToStructure<mpv_node>(resultPtr);
             var resultList = Marshal.PtrToStructure<mpv_node_list>(result.list);
 
-            var screenshot = BitmapFromMpvNodeList(resultList);
+            GetBitmapFromMpvNodeList(out bmp, resultList);
 
             mpv_free_node_contents(resultPtr);
 
-            return screenshot;
         }
-        private Bitmap BitmapFromMpvNodeList(mpv_node_list list)
+        private void GetBitmapFromMpvNodeList(out Bitmap bmp, mpv_node_list list)
         {
-            Bitmap bm;
             long w, h, stride;
             w = h = stride = 0;
             string format = string.Empty;
@@ -149,13 +152,12 @@ namespace AtgScriptsExtension
             switch (format)
             {
                 case "bgr0":
-                    bm = new Bitmap((int)w, (int)h, PixelFormat.Format24bppRgb);
-                    bm.ReadRgbFromRgb0(ba.data, (int)ba.size.ToUInt64());
+                    bmp = new Bitmap((int)w, (int)h, PixelFormat.Format24bppRgb);
+                    bmp.ReadRgbFromRgb0(ba.data, (int)ba.size.ToUInt64());
                     break;
                 default:
                     throw new ArgumentException("Not supported color format");
             }
-            return bm;
         }
 
         private void OnMessage(string[] args)
