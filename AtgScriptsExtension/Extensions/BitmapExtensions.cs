@@ -30,7 +30,6 @@ namespace AtgScriptsExtension.Extensions
             var readPtr = data;
             var writePtr = bmData.Scan0;
             var pixelsNumber = (lenB - paddingB) / bpp;
-            var paddingP = paddingB / bpp;
             var strideP = strideB / bpp;
             var widthP = bmp.Width;
             Parallel.For(0, pixelsNumber, (pIndex) =>
