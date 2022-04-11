@@ -8,26 +8,41 @@ namespace AtgScriptsExtension.Extensions
 {
     static internal class BitmapExtensions
     {
-        static internal void ReadRgbFromRgb0(this Bitmap bmp, IntPtr data, int lenBytes)
+        static internal void Read32RgbFromRgb0(this Bitmap bmp, int strideB, IntPtr data, int lenB)
         {
+            const int bpp = 4; // r, g, b, X - 4 bytes
             var format = bmp.PixelFormat;
+            int paddingB = strideB - bmp.Width * bpp;
+            int outOfBoundsB = paddingB * bmp.Height;
+
             if (data == IntPtr.Zero) throw new ArgumentException("data is Zero pointer");
-            if (lenBytes == 0) throw new ArgumentException("lenBytes is 0");
-            if ((lenBytes / 4) != bmp.Width * bmp.Height) throw new ArgumentException("Bitmap dimensions cannot be 0");
-            if (format != PixelFormat.Format24bppRgb) throw new InvalidOperationException("PixelFormat have to be Format24bppRgb");
+            if (lenB == 0) throw new ArgumentException("lenBytes is 0");
+            if (((lenB - outOfBoundsB) / bpp) != bmp.Width * bmp.Height)
+            {
+                throw new ArgumentException("Bitmap dimensions mismatch");
+            }
+            if (format != PixelFormat.Format32bppRgb) throw new InvalidOperationException("PixelFormat have to be Format32bppRgb");
 
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-
             var bmData = bmp.LockBits(rect, ImageLockMode.ReadWrite, format);
 
             var readPtr = data;
             var writePtr = bmData.Scan0;
-            // r, g, b, X - 4 bytes
-            var pixelsNumber = lenBytes / 4;
-            Parallel.For(0, pixelsNumber, (i) =>
+            var pixelsNumber = (lenB - paddingB) / bpp;
+            var paddingP = paddingB / bpp;
+            var strideP = strideB / bpp;
+            var widthP = bmp.Width;
+            var opt = new ParallelOptions() { MaxDegreeOfParallelism = 1 };
+            Parallel.For(0, pixelsNumber, opt, (pIndex) =>
             {
-                var rPtr = readPtr + 4 * i;
-                var wPtr = writePtr + 3 * i;
+                int y = pIndex / strideP;
+                bool isOutOfBound = ((pIndex % strideP) >= widthP) ||
+                    (y == 0) && (pIndex >= widthP);
+                if (isOutOfBound) return;
+
+                var rPtr = readPtr + bpp * pIndex;
+                int offset = paddingB * y;
+                var wPtr = writePtr + bpp * pIndex - offset;
                 const int gOfs = 1;
                 const int bOfs = 2;
                 Marshal.WriteByte(wPtr, Marshal.ReadByte(rPtr));

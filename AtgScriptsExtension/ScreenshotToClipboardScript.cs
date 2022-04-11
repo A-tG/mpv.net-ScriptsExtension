@@ -170,8 +170,8 @@ namespace AtgScriptsExtension
             switch (format)
             {
                 case "bgr0":
-                    bmp = new Bitmap((int)w, (int)h, PixelFormat.Format24bppRgb);
-                    bmp.ReadRgbFromRgb0(ba.data, (int)ba.size.ToUInt64());
+                    bmp = new Bitmap((int)w, (int)h, PixelFormat.Format32bppRgb);
+                    bmp.Read32RgbFromRgb0((int)stride, ba.data, (int)ba.size.ToUInt64());
                     break;
                 default:
                     throw new ArgumentException($"Unsupported color format: {format}");
@@ -194,7 +194,7 @@ namespace AtgScriptsExtension
             m_core.CommandV("show-text", text);
 
             string duration = m_core.GetPropertyOsdString("osd-duration");
-            if (TryScreenshotToClipboard(flags))
+            if (TryScreenshotToClipboard("window"))
             {
                 text += ": Succeded";
             }
