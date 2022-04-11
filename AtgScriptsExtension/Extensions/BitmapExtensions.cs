@@ -11,11 +11,10 @@ namespace AtgScriptsExtension.Extensions
         static internal void ReadRgbFromRgb0(this Bitmap bmp, IntPtr data, int lenBytes)
         {
             var format = bmp.PixelFormat;
-            lenBytes /= 4; // r, g, b, X
             if (data == IntPtr.Zero) throw new ArgumentException("data is Zero pointer");
             if (lenBytes == 0) throw new ArgumentException("lenBytes is 0");
+            if ((lenBytes / 4) != bmp.Width * bmp.Height) throw new ArgumentException("Bitmap dimensions cannot be 0");
             if (format != PixelFormat.Format24bppRgb) throw new InvalidOperationException("PixelFormat have to be Format24bppRgb");
-            if ((bmp.Width * bmp.Height) != lenBytes) throw new ArgumentException("Bitmap dimensions mismatch");
 
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
 
@@ -23,7 +22,9 @@ namespace AtgScriptsExtension.Extensions
 
             var readPtr = data;
             var writePtr = bmData.Scan0;
-            Parallel.For(0, lenBytes, (i) =>
+            // r, g, b, X - 4 bytes
+            var pixelsNumber = lenBytes / 4;
+            Parallel.For(0, pixelsNumber, (i) =>
             {
                 var rPtr = readPtr + 4 * i;
                 var wPtr = writePtr + 3 * i;

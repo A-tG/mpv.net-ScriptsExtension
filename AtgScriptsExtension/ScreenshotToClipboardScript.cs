@@ -62,32 +62,48 @@ namespace AtgScriptsExtension
         [DllImport("mpv-2.dll")]
         internal static extern int mpv_command_node(IntPtr ctx, IntPtr args, IntPtr result);
 
-        unsafe private void GetRawScreenshot(out Bitmap bmp)
+        unsafe private void GetRawScreenshot(out Bitmap bmp, string flags = "")
         {
-            var argsNode = new mpv_node
-            {
-                format = mpv_format.MPV_FORMAT_NODE_ARRAY
-            };
-            var resultNode = new mpv_node();
+            bool hasFlags = string.IsNullOrEmpty(flags);
 
-            var argsNodeList = new mpv_node_list();
+            var argsNodeListFlagsVal = new mpv_node
+            {
+                format = mpv_format.MPV_FORMAT_STRING
+            };
+            if (hasFlags)
+            {
+                byte* flagsPtr = stackalloc byte[flags.Length + 1];
+                MarHelper.CopyStrToByteStrBuff(flags, flagsPtr);
+                argsNodeListFlagsVal.str = (IntPtr)flagsPtr;
+            }
+
             var argsNodeListCmdVal = new mpv_node
             {
                 format = mpv_format.MPV_FORMAT_STRING
             };
-
             byte* cmdPtr = stackalloc byte[scrRawCommand.Length + 1];
             MarHelper.CopyStrToByteStrBuff(scrRawCommand, cmdPtr);
             argsNodeListCmdVal.str = (IntPtr)cmdPtr;
 
-            var lvPtr = stackalloc byte[Marshal.SizeOf(argsNodeListCmdVal)];
+            var argsNodeList = new mpv_node_list();
+            int argsLen = hasFlags ? 2 : 1;
+            var listValSize = Marshal.SizeOf(argsNodeListCmdVal);
+            var lvPtr = stackalloc byte[listValSize * argsLen];
             var listValPtr = (IntPtr)lvPtr;
             Marshal.StructureToPtr(argsNodeListCmdVal, listValPtr, false);
+            if (hasFlags)
+            {
+                Marshal.StructureToPtr(argsNodeListFlagsVal, listValPtr + listValSize, false);
+            }
             argsNodeList.values = listValPtr;
 
+            var argsNode = new mpv_node
+            {
+                format = mpv_format.MPV_FORMAT_NODE_ARRAY
+            };
             var lPtr = stackalloc byte[Marshal.SizeOf(argsNodeList)];
             var listPtr = (IntPtr)lPtr;
-            argsNodeList.num = 1;
+            argsNodeList.num = argsLen;
             argsNode.list = listPtr;
             Marshal.StructureToPtr(argsNodeList, listPtr, false);
 
@@ -95,6 +111,7 @@ namespace AtgScriptsExtension
             var argsPtr = (IntPtr)aPtr;
             Marshal.StructureToPtr(argsNode, argsPtr, false);
 
+            var resultNode = new mpv_node();
             var rPtr = stackalloc byte[Marshal.SizeOf(resultNode)];
             var resultPtr = (IntPtr)rPtr;
             Marshal.StructureToPtr(resultNode, resultPtr, false);
