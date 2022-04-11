@@ -11,8 +11,9 @@ namespace AtgScriptsExtension.Extensions
         unsafe static internal void Read32RgbFromPaddedRgb0(this Bitmap bmp, int strideB, IntPtr data, int lenB)
         {
             const int bpp = 4; // r, g, b, X - 4 bytes
+            const PixelFormat preferredFormat = PixelFormat.Format32bppRgb;
+
             var format = bmp.PixelFormat;
-            var preferredFormat = PixelFormat.Format32bppRgb;
             int paddingB = strideB - bmp.Width * bpp;
             int outOfBoundB = paddingB * bmp.Height;
 
@@ -29,7 +30,7 @@ namespace AtgScriptsExtension.Extensions
 
             var readPtr = (byte*)data;
             var writePtr = (byte*)bmData.Scan0;
-            var pixelsNumber = (lenB - paddingB) / bpp;
+            var pixelsNumber = (lenB - paddingB) / bpp; // remove padding in the last line of pixels
             var strideP = strideB / bpp;
             var widthP = bmp.Width;
 
