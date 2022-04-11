@@ -64,40 +64,40 @@ namespace AtgScriptsExtension
 
         unsafe private void GetRawScreenshot(out Bitmap bmp)
         {
-            var args = new mpv_node
+            var argsNode = new mpv_node
             {
                 format = mpv_format.MPV_FORMAT_NODE_ARRAY
             };
-            var result = new mpv_node();
+            var resultNode = new mpv_node();
 
-            var list = new mpv_node_list();
-            var listValues = new mpv_node
+            var argsNodeList = new mpv_node_list();
+            var argsNodeListCmdVal = new mpv_node
             {
                 format = mpv_format.MPV_FORMAT_STRING
             };
 
             byte* cmdPtr = stackalloc byte[scrRawCommand.Length + 1];
             MarHelper.CopyStrToByteStrBuff(scrRawCommand, cmdPtr);
-            listValues.str = (IntPtr)cmdPtr;
+            argsNodeListCmdVal.str = (IntPtr)cmdPtr;
 
-            var lvPtr = stackalloc byte[Marshal.SizeOf(listValues)];
+            var lvPtr = stackalloc byte[Marshal.SizeOf(argsNodeListCmdVal)];
             var listValPtr = (IntPtr)lvPtr;
-            Marshal.StructureToPtr(listValues, listValPtr, false);
-            list.values = listValPtr;
+            Marshal.StructureToPtr(argsNodeListCmdVal, listValPtr, false);
+            argsNodeList.values = listValPtr;
 
-            var lPtr = stackalloc byte[Marshal.SizeOf(list)];
+            var lPtr = stackalloc byte[Marshal.SizeOf(argsNodeList)];
             var listPtr = (IntPtr)lPtr;
-            list.num = 1;
-            args.list = listPtr;
-            Marshal.StructureToPtr(list, listPtr, false);
+            argsNodeList.num = 1;
+            argsNode.list = listPtr;
+            Marshal.StructureToPtr(argsNodeList, listPtr, false);
 
-            var rPtr = stackalloc byte[Marshal.SizeOf(result)];
-            var resultPtr = (IntPtr)rPtr;
-            Marshal.StructureToPtr(result, resultPtr, false);
-
-            var aPtr = stackalloc byte[Marshal.SizeOf(args)];
+            var aPtr = stackalloc byte[Marshal.SizeOf(argsNode)];
             var argsPtr = (IntPtr)aPtr;
-            Marshal.StructureToPtr(args, argsPtr, false);
+            Marshal.StructureToPtr(argsNode, argsPtr, false);
+
+            var rPtr = stackalloc byte[Marshal.SizeOf(resultNode)];
+            var resultPtr = (IntPtr)rPtr;
+            Marshal.StructureToPtr(resultNode, resultPtr, false);
 
             var res = (mpv_error)mpv_command_node(m_core.Handle, argsPtr, resultPtr);
             if (res != mpv_error.MPV_ERROR_SUCCESS)
@@ -105,8 +105,8 @@ namespace AtgScriptsExtension
                 throw new InvalidOperationException($"Command returned error: {((int)res)} {res}");
             }
 
-            result = Marshal.PtrToStructure<mpv_node>(resultPtr);
-            var resultList = Marshal.PtrToStructure<mpv_node_list>(result.list);
+            resultNode = Marshal.PtrToStructure<mpv_node>(resultPtr);
+            var resultList = Marshal.PtrToStructure<mpv_node_list>(resultNode.list);
 
             GetBitmapFromMpvNodeList(out bmp, resultList);
 
