@@ -64,7 +64,7 @@ namespace AtgScriptsExtension
 
         unsafe private void GetRawScreenshot(out Bitmap bmp, string flags = "")
         {
-            bool hasFlags = string.IsNullOrEmpty(flags);
+            bool hasFlags = !string.IsNullOrEmpty(flags);
 
             var argsNodeListFlagsVal = new mpv_node
             {
