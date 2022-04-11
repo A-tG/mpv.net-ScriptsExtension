@@ -1,3 +1,5 @@
+mpv.net Extension
+
 [Download](https://github.com/A-tG/mpv.net-ScriptsExtension/releases/latest/download/AtgScriptsExtension.zip) and unpack dll to `%APPDATA%\mpv.net\extensions\AtgScriptsExtension\`
 
 # Scripts
