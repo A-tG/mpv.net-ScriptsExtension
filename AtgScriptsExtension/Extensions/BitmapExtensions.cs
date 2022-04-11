@@ -8,7 +8,7 @@ namespace AtgScriptsExtension.Extensions
 {
     static internal class BitmapExtensions
     {
-        static internal void Read32RgbFromRgb0(this Bitmap bmp, int strideB, IntPtr data, int lenB)
+        static internal void Read32RgbFromPaddedRgb0(this Bitmap bmp, int strideB, IntPtr data, int lenB)
         {
             const int bpp = 4; // r, g, b, X - 4 bytes
             var format = bmp.PixelFormat;

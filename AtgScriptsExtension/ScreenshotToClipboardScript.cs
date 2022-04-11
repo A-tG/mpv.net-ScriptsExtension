@@ -171,7 +171,7 @@ namespace AtgScriptsExtension
             {
                 case "bgr0":
                     bmp = new Bitmap((int)w, (int)h, PixelFormat.Format32bppRgb);
-                    bmp.Read32RgbFromRgb0((int)stride, ba.data, (int)ba.size.ToUInt64());
+                    bmp.Read32RgbFromPaddedRgb0((int)stride, ba.data, (int)ba.size.ToUInt64());
                     break;
                 default:
                     throw new ArgumentException($"Unsupported color format: {format}");
