@@ -194,7 +194,7 @@ namespace AtgScriptsExtension
             m_core.CommandV("show-text", text);
 
             string duration = m_core.GetPropertyOsdString("osd-duration");
-            if (TryScreenshotToClipboard("window"))
+            if (TryScreenshotToClipboard(flags))
             {
                 text += ": Succeded";
             }
