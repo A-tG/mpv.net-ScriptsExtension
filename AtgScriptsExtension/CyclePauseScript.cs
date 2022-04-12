@@ -9,15 +9,11 @@ namespace AtgScriptsExtension
         public CyclePauseScript(string name) : base(name)
         {
             m_core.ObservePropertyBool("eof-reached", (isEof) => m_isEof = isEof);
-            m_core.ClientMessage += OnMessage;
+            MessageReceived = OnMessageReceived;
         }
 
-        private void OnMessage(string[] args)
+        private void OnMessageReceived(string[] args)
         {
-            if ((args == null) || (args.Length == 0)) return;
-
-            if (args[0] != Name) return;
-
             if (m_isEof)
             {
                 m_core.CommandV("seek", "0", "absolute");

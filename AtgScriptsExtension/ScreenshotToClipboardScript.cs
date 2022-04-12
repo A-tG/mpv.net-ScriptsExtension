@@ -19,7 +19,7 @@ namespace AtgScriptsExtension
 
         public ScreenshotToClipboardScript(string name) : base(name)
         {
-            m_core.ClientMessage += OnMessage;
+            MessageReceived = OnMessageReceived;
         }
 
         public bool TryScreenshotToClipboard(string flags = "")
@@ -40,6 +40,36 @@ namespace AtgScriptsExtension
                 m_bmp = null;
             }
             return res;
+        }
+
+        private void OnMessageReceived(string[] args)
+        {
+            var flags = "";
+            if (args.Length > 0)
+            {
+                flags = args[0];
+            }
+
+            string text = "Copy Screenshot to clipboard";
+            m_core.CommandV("show-text", text);
+
+            string duration = m_core.GetPropertyOsdString("osd-duration");
+            if (TryScreenshotToClipboard(flags))
+            {
+                text += ": Succeded";
+            }
+            else
+            {
+                text += ": Failed";
+                if (!string.IsNullOrEmpty(m_errorMessage))
+                {
+                    text += '\n' + m_errorMessage;
+                    duration = "5000";
+                }
+            }
+            m_errorMessage = "";
+
+            m_core.CommandV("show-text", text, duration);
         }
 
         private void ScreenshotToClipboard(string flags = "")
@@ -177,40 +207,6 @@ namespace AtgScriptsExtension
                 default:
                     throw new ArgumentException($"Unsupported color format: {format}");
             }
-        }
-
-        private void OnMessage(string[] args)
-        {
-            if ((args == null) || (args.Length == 0)) return;
-
-            if (args[0] != Name) return;
-
-            var flags = "";
-            if (args.Length > 1)
-            {
-                flags = args[1];
-            }
-
-            string text = "Copy Screenshot to clipboard";
-            m_core.CommandV("show-text", text);
-
-            string duration = m_core.GetPropertyOsdString("osd-duration");
-            if (TryScreenshotToClipboard(flags))
-            {
-                text += ": Succeded";
-            }
-            else
-            {
-                text += ": Failed";
-                if (!string.IsNullOrEmpty(m_errorMessage))
-                {
-                    text += '\n' + m_errorMessage;
-                    duration = "5000";
-                }
-            }
-            m_errorMessage = "";
-
-            m_core.CommandV("show-text", text, duration);
         }
     }
 }
