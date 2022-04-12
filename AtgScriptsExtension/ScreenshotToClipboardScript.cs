@@ -40,6 +40,7 @@ namespace AtgScriptsExtension
             finally
             {
                 m_bmp?.Dispose();
+                m_bmp = null;
             }
             return res;
         }
