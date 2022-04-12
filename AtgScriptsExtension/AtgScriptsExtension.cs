@@ -1,5 +1,4 @@
 ﻿using mpvnet;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
 namespace AtgScriptsExtension
