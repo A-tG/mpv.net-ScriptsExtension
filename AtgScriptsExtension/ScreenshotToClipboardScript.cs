@@ -208,7 +208,7 @@ namespace AtgScriptsExtension
                 if (!string.IsNullOrEmpty(m_errorMessage))
                 {
                     text += '\n' + m_errorMessage;
-                    duration = 5000.ToString();
+                    duration = "5000";
                 }
             }
             m_errorMessage = "";
