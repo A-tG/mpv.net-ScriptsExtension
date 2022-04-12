@@ -11,16 +11,13 @@ using static libmpv;
 
 namespace AtgScriptsExtension
 {
-    public class ScreenshotToClipboardScript
+    public class ScreenshotToClipboardScript : MpvNetScriptBase
     {
-        public const string Name = "atg_screenshot-to-clipboard";
-
         private const string scrRawCommand = "screenshot-raw";
-        private readonly CorePlayer m_core = Global.Core;
         private Bitmap m_bmp;
         private string m_errorMessage = string.Empty;
 
-        public ScreenshotToClipboardScript()
+        public ScreenshotToClipboardScript(string name) : base(name)
         {
             m_core.ClientMessage += OnMessage;
         }

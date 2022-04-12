@@ -2,14 +2,11 @@
 
 namespace AtgScriptsExtension
 {
-    public class CyclePauseScript
+    public class CyclePauseScript : MpvNetScriptBase
     {
-        public const string Name = "atg_cycle-pause";
-
-        private readonly CorePlayer m_core = Global.Core;
         private bool m_isEof = false;
 
-        public CyclePauseScript()
+        public CyclePauseScript(string name) : base(name)
         {
             m_core.ObservePropertyBool("eof-reached", (isEof) => m_isEof = isEof);
             m_core.ClientMessage += OnMessage;

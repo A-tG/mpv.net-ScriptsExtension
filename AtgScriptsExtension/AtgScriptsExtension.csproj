@@ -54,6 +54,7 @@
     <Compile Include="CyclePauseScript.cs" />
     <Compile Include="Extensions\BitmapExtensions.cs" />
     <Compile Include="Helpers\MarHelper.cs" />
+    <Compile Include="MpvNetScriptBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScreenshotToClipboardScript.cs" />
     <Compile Include="Types.cs" />
