@@ -64,6 +64,9 @@ namespace AtgScriptsExtension
 
         unsafe private void GetRawScreenshot(out Bitmap bmp, string flags = "")
         {
+            const int flagsMaxLen = 256;
+            if ((flags?.Length + 1) > flagsMaxLen) throw new ArgumentException($"Flags argument is too large (> {flagsMaxLen})");
+
             bool hasFlags = !string.IsNullOrEmpty(flags);
 
             var argsNodeListFlagsVal = new mpv_node
