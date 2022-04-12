@@ -16,7 +16,7 @@ namespace AtgScriptsExtension
         public const string Name = "atg_screenshot-to-clipboard";
 
         private const string scrRawCommand = "screenshot-raw";
-        private CorePlayer m_core = Global.Core;
+        private readonly CorePlayer m_core = Global.Core;
         private Bitmap m_bmp;
         private string m_errorMessage = string.Empty;
 

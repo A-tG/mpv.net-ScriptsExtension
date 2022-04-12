@@ -9,5 +9,7 @@ namespace AtgScriptsExtension
         // Add to input.conf
         // Ctrl+c script-message atg_screenshot-to-clipboard [flags]
         ScreenshotToClipboardScript screenshotToClipboardScript = new ScreenshotToClipboardScript();
+        // Ctrl+c script-message atg_cycle-pause
+        CyclePauseScript cyclePauseSript = new CyclePauseScript();
     }
 }

@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AtgScriptsExtension.cs" />
+    <Compile Include="CyclePauseScript.cs" />
     <Compile Include="Extensions\BitmapExtensions.cs" />
     <Compile Include="Helpers\MarHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
