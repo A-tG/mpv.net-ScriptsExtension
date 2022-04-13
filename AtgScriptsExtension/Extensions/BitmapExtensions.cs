@@ -8,14 +8,14 @@ namespace AtgScriptsExtension.Extensions
 {
     static internal class BitmapExtensions
     {
-        unsafe static internal void Read32RgbFromPaddedRgb0(this Bitmap bmp, int strideB, IntPtr data, int lenB)
+        unsafe public static void Read32RgbFromPaddedRgb0(this Bitmap bmp, long strideB, IntPtr data, long lenB)
         {
             const int bpp = 4; // r, g, b, X - 4 bytes
             const PixelFormat preferredFormat = PixelFormat.Format32bppRgb;
 
             var format = bmp.PixelFormat;
-            int paddingB = strideB - bmp.Width * bpp;
-            int outOfBoundB = paddingB * bmp.Height;
+            var paddingB = strideB - bmp.Width * bpp;
+            var outOfBoundB = paddingB * bmp.Height;
 
             if (data == IntPtr.Zero) throw new ArgumentException("data is Zero pointer");
             if (lenB == 0) throw new ArgumentException("lenBytes is 0");
@@ -36,15 +36,15 @@ namespace AtgScriptsExtension.Extensions
 
             Parallel.For(0, pixelsNumber, (pIndex) =>
             {
-                int y = pIndex / strideP;
+                var y = pIndex / strideP;
                 bool isOutOfBound = ((pIndex % strideP) >= widthP) ||
                     (y == 0) && (pIndex >= widthP);
                 if (isOutOfBound) return;
 
-                int ofs = bpp * pIndex;
+                var ofs = bpp * pIndex;
                 for (int i = 0; i < 3; i++)
                 {
-                    int outOfBoundOfs = paddingB * y;
+                    var outOfBoundOfs = paddingB * y;
                     writePtr[ofs + i - outOfBoundOfs] = readPtr[ofs + i];
                 }
             });
