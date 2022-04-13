@@ -7,7 +7,7 @@ namespace AtgScriptsExtension
     public class AtgScriptsExtension : IExtension
     {
         readonly MpvNetScriptBase[] scripts = {
-            // Add to input.conf
+            // Add to input.conf:
             // Ctrl+c script-message atg_screenshot-to-clipboard [flags]
             new ScreenshotToClipboardScript("atg_screenshot-to-clipboard"),
             // Space script-message atg_cycle-pause

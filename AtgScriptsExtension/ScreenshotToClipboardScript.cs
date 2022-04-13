@@ -16,6 +16,7 @@ namespace AtgScriptsExtension
         private const string scrRawCommand = "screenshot-raw";
         private Bitmap m_bmp;
         private string m_errorMessage = string.Empty;
+        private bool m_IsCbThreadSucceded = false;
 
         public ScreenshotToClipboardScript(string name) : base(name)
         {
@@ -32,7 +33,7 @@ namespace AtgScriptsExtension
             }
             catch (Exception ex)
             {
-                m_errorMessage = $"{ex.GetType().Name}: {ex.Message}";
+                SetErrorMessage(ex);
             }
             finally
             {
@@ -41,6 +42,8 @@ namespace AtgScriptsExtension
             }
             return res;
         }
+
+        private void SetErrorMessage(Exception ex) => m_errorMessage = $"{ex.GetType().Name}: {ex.Message}";
 
         private void OnMessageReceived(string[] args)
         {
@@ -54,7 +57,7 @@ namespace AtgScriptsExtension
             m_core.CommandV("show-text", text);
 
             string duration = m_core.GetPropertyOsdString("osd-duration");
-            if (TryScreenshotToClipboard(flags))
+            if (TryScreenshotToClipboard(flags) && m_IsCbThreadSucceded)
             {
                 text += ": Succeded";
             }
@@ -78,8 +81,16 @@ namespace AtgScriptsExtension
 
             var thread = new Thread(() =>
             {
-                // need to be done in STA thread
-                Clipboard.SetImage(m_bmp);
+                try
+                {
+                    Clipboard.SetImage(m_bmp); // need to be done in STA thread
+                    m_IsCbThreadSucceded = true;
+                }
+                catch (Exception ex)
+                {
+                    m_IsCbThreadSucceded = false;
+                    SetErrorMessage(ex);
+                }
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
