@@ -46,7 +46,7 @@ namespace AtgScriptsExtension
         private void SetErrorMessage(Exception ex, string msgHeader = "")
         {
             string h = string.IsNullOrEmpty(msgHeader) ? "" : msgHeader + '\n';
-            m_errorMessage = $"{h}{ex.GetType().Name}: {ex.Message}";
+            m_errorMessage = $"{h}{ex.GetType().Name}: {ex.Message}\nAt: {ex.TargetSite}";
         }
 
         private void OnMessageReceived(string[] args)
