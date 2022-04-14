@@ -26,7 +26,7 @@ namespace AtgScriptsExtension.Extensions
             if (format != preferredFormat) throw new InvalidOperationException($"PixelFormat have to be {preferredFormat}");
 
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            var bmData = bmp.LockBits(rect, ImageLockMode.ReadWrite, format);
+            var bmData = bmp.LockBits(rect, ImageLockMode.WriteOnly, format);
 
             var readPtr = (byte*)data;
             var writePtr = (byte*)bmData.Scan0;
