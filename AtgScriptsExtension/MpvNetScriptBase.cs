@@ -19,9 +19,8 @@ namespace AtgScriptsExtension
 
         private void OnMessage(string[] args)
         {
-            if (args?.Length == 0) return;
-
-            if (args[0] != Name) return;
+            bool isEmpty = !(args?.Length > 0);
+            if (isEmpty || (args[0] != Name)) return;
 
             var argsWithoutScriptName = (args.Length > 1) ? 
                 args.Skip(1).ToArray() :
