@@ -1,4 +1,4 @@
-[mpv.net](https://github.com/stax76/mpv.net) Extension to keep all my scripts in one project (also it easier to compile extension than csharp script)
+[mpv.net](https://github.com/stax76/mpv.net) Extension to keep all my scripts in one project (also it easier to work with extension than csharp script - debugging, compiling, unsafe code, etc)
 
 [Download](https://github.com/A-tG/mpv.net-ScriptsExtension/releases/latest/download/AtgScriptsExtension.zip) and unpack dll to `%APPDATA%\mpv.net\extensions\AtgScriptsExtension\`
 
