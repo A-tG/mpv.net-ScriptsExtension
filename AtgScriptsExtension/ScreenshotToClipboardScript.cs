@@ -1,6 +1,5 @@
 ﻿using AtgScriptsExtension.Extensions;
 using AtgScriptsExtension.Helpers;
-using mpvnet;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;

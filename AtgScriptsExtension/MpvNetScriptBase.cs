@@ -22,9 +22,7 @@ namespace AtgScriptsExtension
             bool isEmpty = !(args?.Length > 0);
             if (isEmpty || (args[0] != Name)) return;
 
-            var argsWithoutScriptName = (args.Length > 1) ? 
-                args.Skip(1).ToArray() :
-                Array.Empty<string>();
+            var argsWithoutScriptName = args.Skip(1).ToArray();
             MessageReceived?.Invoke(argsWithoutScriptName);
         }
     }
