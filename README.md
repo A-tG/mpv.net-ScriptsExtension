@@ -13,7 +13,7 @@
 ### Pause/unpause + rewind if video ended
  `Space script-message atg_cycle-pause`
  
-### Invert keepaspect-window while Ctrl button is held down while resizing
+### Invert keepaspect-window while Ctrl button is held down on window resize
  Add this line
 `atg_invert-keepaspect-window-on-key = true`
 to `mpvnet.conf`
