@@ -10,5 +10,10 @@
 
  [flags](https://mpv.io/manual/master/#command-interface-screenshot-%3Cflags%3E) from screenshot command
  
- ### Pause/unpause + rewind if video ended
+### Pause/unpause + rewind if video ended
  `Space script-message atg_cycle-pause`
+ 
+### Invert keepaspect-window while Ctrl button is held down while resizing
+ Add this line
+`atg_invert-keepaspect-window-on-key = true`
+to `mpvnet.conf`
