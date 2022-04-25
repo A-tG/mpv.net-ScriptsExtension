@@ -17,6 +17,8 @@ namespace AtgScriptsExtension
             m_core.ClientMessage += OnMessage;
         }
 
+        public MpvNetScriptBase() { }
+
         private void OnMessage(string[] args)
         {
             bool isEmpty = !(args?.Length > 0);
