@@ -9,6 +9,7 @@ namespace AtgScriptsExtension
         const string PropName = "keepaspect-window";
         private bool m_isResizing = false;
         private bool m_isKeepAspectInitial = false;
+        private Keys m_modifierKey = Keys.Control;
 
         public WindowAspectWhileResizeScript()
         {
@@ -34,7 +35,7 @@ namespace AtgScriptsExtension
         {
             if (!m_isResizing) return;
 
-            bool isKeyPressed = mpvnet.MainForm.ModifierKeys == Keys.Control;
+            bool isKeyPressed = mpvnet.MainForm.ModifierKeys == m_modifierKey;
             m_core.SetPropertyBool(PropName, isKeyPressed ? !m_isKeepAspectInitial : m_isKeepAspectInitial);
         }
     }
